@@ -6,6 +6,7 @@ public class HouseWife : CharactorClass {
     public GameObject _Lightsaver;
     public GameObject _vacuum;
     int _SlashDirection;
+    private GameObject _throwobject;
 
     // Use this for initialization
     void Start () {
@@ -13,7 +14,7 @@ public class HouseWife : CharactorClass {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	new void Update () {
         base.Update();
         var position = _charactor.transform.position;
         //Kキーを押すとライトセイバーで斬りつける
@@ -47,6 +48,40 @@ public class HouseWife : CharactorClass {
                 _vacuum.transform.position = position + new Vector3(-3, 0, 0);
             }
         }
+        //Pキーを押すと、投げる
+        if(Input.GetKeyDown(KeyCode.P) && _throwobject != null)
+        {
+
+            if(Input.GetKey(KeyCode.RightArrow))
+            {
+                throwing(30, 30);
+                _throwobject.GetComponent<Rigidbody2D>().freezeRotation = false;
+                _throwobject.GetComponent<Rigidbody2D>().angularVelocity = -1000;
+                _throwobject.GetComponent<HamsterManager>().enabled = false;
+                Invoke("scriptactive",2);
+            }
+            else if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                throwing(-30, 30);
+                _throwobject.GetComponent<Rigidbody2D>().freezeRotation = false;
+                _throwobject.GetComponent<Rigidbody2D>().angularVelocity = 1000;
+                _throwobject.GetComponent<HamsterManager>().enabled = false;
+                Invoke("scriptactive", 2);
+            }
+            
+        }
+    }
+
+    //投げたキャラのスクリプトを有効にする
+    private void scriptactive()
+    {
+        _throwobject.GetComponent<HamsterManager>().enabled = true;
+    }
+
+    //投げるキャラの位置をコントロールする
+    private void throwing(float X, float Y)
+    {
+        _throwobject.GetComponent<Rigidbody2D>().velocity = new Vector2(X,Y);
     }
 
     //ライトセイバーの処理
@@ -66,5 +101,11 @@ public class HouseWife : CharactorClass {
         _Lightsaver.transform.eulerAngles = new Vector3(0, 0, 30 * _SlashDirection);
         _Lightsaver.GetComponent<Rigidbody2D>().angularVelocity = -800 * _SlashDirection;
         _Lightsaver.GetComponent<Rigidbody2D>().velocity = new Vector2(15 * _SlashDirection, -23);
+    }
+
+    //投げるキャラを取得する
+    public void setThrowObject(GameObject throwobject)
+    {
+        _throwobject = throwobject;
     }
 }
