@@ -15,14 +15,5 @@ public class ThorowTrigger : MonoBehaviour {
 	
 	}
 
-    private void OnTriggerEnter2D(Collider2D col)
-    {
-        _housewife.GetComponent<HouseWife>().setThrowObject(col.gameObject);
-
-    }
-
-    private void OnTriggerExit2D(Collider2D col)
-    {
-        _housewife.GetComponent<HouseWife>().setThrowObject(null);
-    }
+    
 }

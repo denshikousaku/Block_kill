@@ -7,6 +7,7 @@ public class HouseWife : CharactorClass {
     public GameObject _vacuum;
     int _SlashDirection;
     private GameObject _throwobject;
+    private bool _isthrow = false;
 
     // Use this for initialization
     void Start () {
@@ -49,11 +50,13 @@ public class HouseWife : CharactorClass {
             }
         }
         //Pキーを押すと、投げる
+        //投げている途中に_throwobjectがnullになると、ハムスターが操作不能になる
         if(Input.GetKeyDown(KeyCode.P) && _throwobject != null)
         {
 
             if(Input.GetKey(KeyCode.RightArrow))
             {
+                _isthrow = true;
                 throwing(30, 30);
                 _throwobject.GetComponent<Rigidbody2D>().freezeRotation = false;
                 _throwobject.GetComponent<Rigidbody2D>().angularVelocity = -1000;
@@ -62,6 +65,7 @@ public class HouseWife : CharactorClass {
             }
             else if (Input.GetKey(KeyCode.LeftArrow))
             {
+                _isthrow = true;
                 throwing(-30, 30);
                 _throwobject.GetComponent<Rigidbody2D>().freezeRotation = false;
                 _throwobject.GetComponent<Rigidbody2D>().angularVelocity = 1000;
@@ -76,6 +80,7 @@ public class HouseWife : CharactorClass {
     private void scriptactive()
     {
         _throwobject.GetComponent<HamsterManager>().enabled = true;
+        _isthrow = false;
     }
 
     //投げるキャラの位置をコントロールする
@@ -104,8 +109,14 @@ public class HouseWife : CharactorClass {
     }
 
     //投げるキャラを取得する
-    public void setThrowObject(GameObject throwobject)
+    private void OnTriggerEnter2D(Collider2D col)
     {
-        _throwobject = throwobject;
+        _throwobject = col.gameObject;
+    }
+
+    //投げるキャラを破棄
+    private void OnTriggerExit2D(Collider2D col)
+    {
+        _throwobject = null;
     }
 }
