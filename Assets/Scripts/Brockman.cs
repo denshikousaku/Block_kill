@@ -3,20 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
-public class CharactorManager : MonoBehaviour
+public class Brockman : MonoBehaviour
 {
     //キー設定
     string yoko = "yoko1P";
     private KeyCode _jamp = KeyCode.JoystickButton2;
-    private KeyCode _hummerbutton = KeyCode.JoystickButton0;
     private KeyCode _blockbutton = KeyCode.JoystickButton1;
     private KeyCode _saverbutton = KeyCode.JoystickButton3;
 
     public GameObject _camera;
     public GameObject _charactor;
-
-    public GameObject _hammerP;
-    private GameObject _hammerO;
 
     public int _blockselect = 1;
     private GameObject _blockPrefab;
@@ -76,11 +72,7 @@ public class CharactorManager : MonoBehaviour
         {
             _charactor.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 50);
         }
-        //Hキーでhammerを投げる
-        if (Input.GetKeyDown(KeyCode.H) || Input.GetKeyDown(_hummerbutton))
-        {
-            HammerControl(3, 45);
-        }
+
         //Bボタンを押すと、ブロックに対して処理をする
         if (Input.GetKeyDown(KeyCode.B) || Input.GetKeyDown(_blockbutton))
         {
@@ -103,6 +95,7 @@ public class CharactorManager : MonoBehaviour
         {
             BlockControl(_blockPrefab4, ref _RiftingBlock);
         }
+
         //キャラクターの頭上にブロックを追従させる
         if (_RiftingBlock != null)
         {
@@ -121,7 +114,6 @@ public class CharactorManager : MonoBehaviour
             slash(position.x,position.y);
         }
 
-        
         if(_Lightsaver.activeSelf == true)
         {
             //セイバーを振る範囲が決まっているので、角度で判定すべきである
@@ -134,8 +126,8 @@ public class CharactorManager : MonoBehaviour
                 _Lightsaver.GetComponent<BoxCollider2D>().enabled = true;
             }
         }
-        //落下死
 
+        //落下死
         if (position.y < -25)
         {
             GAMEOVER();
@@ -228,27 +220,6 @@ public class CharactorManager : MonoBehaviour
         var position = _charactor.transform.position;
         gameobject = Instantiate(prefab, new Vector2(position.x + X, position.y + Y), Quaternion.identity) as GameObject;
         gameobject.name = prefab.name;
-    }
-
-    //ハンマーに対して条件に応じた処理を行う関数
-    private void HammerControl(float position, float speed)
-    {
-        if (_isLeftMove == false)  //右に投げる
-        {
-            hammerthrow(position, 0, speed);
-        }
-        else  //左に投げる
-        {
-            hammerthrow(-position, 0, -speed);
-        }
-        Destroy(_hammerO, 1);
-    }
-
-    //hammerのprefabをインスタンスし、力を加える　//refの使い方がイマイチ分からない
-    private void hammerthrow(float X, float Y, float speed)
-    {
-        PrefabInatance(_hammerP, ref _hammerO, X, Y);
-        _hammerO.GetComponent<Rigidbody2D>().velocity = new Vector2(speed, 0);    //.AddForce(Vector2.left * force);
     }
 
     //ライトセイバーの処理

@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
 
-public class HamsterManager : MonoBehaviour
+public class Hamster : MonoBehaviour
 {
     string yoko = "yoko2P";
 

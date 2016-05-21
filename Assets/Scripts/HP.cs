@@ -7,6 +7,7 @@ public class HP : MonoBehaviour{
     public int MaxHP;
     private int NowHP;
     public GameObject HPtext;
+    public GameObject _GAMEOVER;
 
 	// Use this for initialization
 	void Start () {
@@ -19,6 +20,7 @@ public class HP : MonoBehaviour{
     {
 
     }
+
     //現在のHPを増減させる //ダメージと回復は分けなくてよいか
     public void AddDamage(int damage)
     {
@@ -32,7 +34,7 @@ public class HP : MonoBehaviour{
         {
             NowHP = 0;
             HPtext.GetComponent<Text>().text = "HP " + NowHP.ToString();
-            Destroy(gameObject);
+            _GAMEOVER.GetComponent<GAMEOVERscript>().thiunthiun(gameObject);
         }
     }
 }

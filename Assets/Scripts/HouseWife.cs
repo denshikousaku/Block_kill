@@ -1,13 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class HouseWife : CharactorClass {
+public class HouseWife : Charactor {
 
     public GameObject _Lightsaver;
     public GameObject _vacuum;
     int _SlashDirection;
-    private GameObject _throwobject;
+    private GameObject _throwtarget;
     private bool _isthrow = false;
+
+    public HouseWife()
+    {
+        RightKey = KeyCode.RightArrow;
+        Leftkey = KeyCode.LeftArrow;
+        JumpKey = KeyCode.Space;
+    }
 
     // Use this for initialization
     void Start () {
@@ -15,7 +22,7 @@ public class HouseWife : CharactorClass {
 	}
 	
 	// Update is called once per frame
-	new void Update () {
+	new void Update (){
         base.Update();
         var position = _charactor.transform.position;
         //Kキーを押すとライトセイバーで斬りつける
@@ -50,43 +57,42 @@ public class HouseWife : CharactorClass {
             }
         }
         //Pキーを押すと、投げる
-        //投げている途中に_throwobjectがnullになると、ハムスターが操作不能になる
-        if(Input.GetKeyDown(KeyCode.P) && _throwobject != null)
+        //投げている途中に_throwtargetがnullになると、ハムスターが操作不能になる
+        if(Input.GetKey(KeyCode.P) && _throwtarget != null)
         {
-
-            if(Input.GetKey(KeyCode.RightArrow))
+            _isthrow = true;
+            _throwtarget.GetComponent<Rigidbody2D>().freezeRotation = false;
+            var selfpositon = _charactor.transform.position;
+            if (Input.GetKey(KeyCode.RightArrow))
             {
-                _isthrow = true;
-                throwing(30, 30);
-                _throwobject.GetComponent<Rigidbody2D>().freezeRotation = false;
-                _throwobject.GetComponent<Rigidbody2D>().angularVelocity = -1000;
-                _throwobject.GetComponent<HamsterManager>().enabled = false;
-                Invoke("scriptactive",2);
+                _throwtarget.transform.position = new Vector3(selfpositon.x + 5,selfpositon.y,0);
+                _throwtarget.GetComponent<Rigidbody2D>().centerOfMass = new Vector2(0,0);
+                _throwtarget.GetComponent<Rigidbody2D>().angularVelocity = -1000;
+                
             }
             else if (Input.GetKey(KeyCode.LeftArrow))
             {
-                _isthrow = true;
-                throwing(-30, 30);
-                _throwobject.GetComponent<Rigidbody2D>().freezeRotation = false;
-                _throwobject.GetComponent<Rigidbody2D>().angularVelocity = 1000;
-                _throwobject.GetComponent<HamsterManager>().enabled = false;
-                Invoke("scriptactive", 2);
+                _throwtarget.transform.position = new Vector3(selfpositon.x - 5,selfpositon.y, 0);
+                _throwtarget.GetComponent<Rigidbody2D>().centerOfMass = new Vector2(0, 0);
+                _throwtarget.GetComponent<Rigidbody2D>().angularVelocity = 1000;
             }
-            
+            _throwtarget.GetComponent<Hamster>().enabled = false;
+            Invoke("scriptactive", 1);
         }
     }
 
     //投げたキャラのスクリプトを有効にする
     private void scriptactive()
     {
-        _throwobject.GetComponent<HamsterManager>().enabled = true;
         _isthrow = false;
+        _throwtarget.GetComponent<Hamster>().enabled = true;
+        _throwtarget.GetComponent<Rigidbody2D>().freezeRotation = true;
     }
 
     //投げるキャラの位置をコントロールする
     private void throwing(float X, float Y)
     {
-        _throwobject.GetComponent<Rigidbody2D>().velocity = new Vector2(X,Y);
+        _throwtarget.GetComponent<Rigidbody2D>().velocity = new Vector2(X,Y);
     }
 
     //ライトセイバーの処理
@@ -111,12 +117,15 @@ public class HouseWife : CharactorClass {
     //投げるキャラを取得する
     private void OnTriggerEnter2D(Collider2D col)
     {
-        _throwobject = col.gameObject;
+        _throwtarget = col.gameObject;
     }
 
     //投げるキャラを破棄
     private void OnTriggerExit2D(Collider2D col)
     {
-        _throwobject = null;
+        if(_isthrow == false)
+        {
+            _throwtarget = null;
+        }
     }
 }

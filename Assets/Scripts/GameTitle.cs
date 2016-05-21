@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class GameTitle : MonoBehaviour {
 
@@ -7,7 +8,7 @@ public class GameTitle : MonoBehaviour {
 	void Start () {
         if (Input.GetKeyDown("space"))
         {
-            Application.LoadLevel("GameScene001");
+            SceneManager.LoadScene("GameScene001");
         }
     }
 	
@@ -15,7 +16,7 @@ public class GameTitle : MonoBehaviour {
 	void Update () {
         if (Input.GetKeyDown("space"))
         {
-            Application.LoadLevel("GameScene001");
+            SceneManager.LoadScene("GameScene001");
         }
     }
 }

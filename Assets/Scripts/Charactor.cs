@@ -2,8 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class CharactorClass : MonoBehaviour {
+public class Charactor : MonoBehaviour {
 
+    protected KeyCode Leftkey;
+    protected KeyCode RightKey;
+    protected KeyCode JumpKey;
     public GameObject _charactor;
     public GameObject _GAMEOVER;
     public bool _isLeftMove = false;
@@ -11,30 +14,29 @@ public class CharactorClass : MonoBehaviour {
     public Animator _animator;
 
     // Update is called once per frame
-    public void Update()
+    protected void Update()
     {
         var position = _charactor.transform.position;
 
         //横矢印キーで移動とアニメーション
-        if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.LeftArrow))
+        if (Input.GetKey(RightKey) || Input.GetKey(Leftkey))
         {
             movecharacter();
         }
 
         //スペースキーでジャンプ
         //スペースキーを押した瞬間
-        if (Input.GetKey(KeyCode.Space) && _colList.Count != 0)
+        if (Input.GetKey(JumpKey) && _colList.Count != 0)
         {
             _charactor.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 50);
         }
-
-        
 
         //落下死
 
         if (position.y < -25)
         {
-            GAMEOVER();
+            Destroy(GameObject.Find("HP"));
+            _GAMEOVER.GetComponent<GAMEOVERscript>().falldead(_charactor);
         }
     }
 
@@ -42,12 +44,12 @@ public class CharactorClass : MonoBehaviour {
     public void movecharacter()
     {
         var position = _charactor.transform.position;
-        if (Input.GetKey(KeyCode.RightArrow))
+        if (Input.GetKey(RightKey))
         {
             position.x += 0.3f;
             _isLeftMove = false;
         }
-        else if (Input.GetKey(KeyCode.LeftArrow))
+        else if (Input.GetKey(Leftkey))
         {
             position.x -= 0.3f;
             _isLeftMove = true;
@@ -70,15 +72,16 @@ public class CharactorClass : MonoBehaviour {
     public void GAMEOVER()
     {
         Destroy(GameObject.Find("HP"));
-        var position = _charactor.transform.position;
-        var gameover = Instantiate(_GAMEOVER, new Vector2(position.x, position.y), Quaternion.identity);
-        gameover.name = _GAMEOVER.name;
+        _GAMEOVER.GetComponent<GAMEOVERscript>().thiunthiun(_charactor);
     }
 
     //当たる処理
     public void OnCollisionEnter2D(Collision2D col)
     {
-        _colList.Add(col.gameObject);
+        if (col.gameObject.name != "BombBlock")
+        {
+            _colList.Add(col.gameObject);
+        }
     }
 
     //離れる処理
