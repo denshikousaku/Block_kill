@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class HouseWife : Charactor {
-
+    /*
     public GameObject _Lightsaver;
     public GameObject _vacuum;
     int _SlashDirection;
@@ -128,4 +128,5 @@ public class HouseWife : Charactor {
             _throwtarget = null;
         }
     }
+    */
 }

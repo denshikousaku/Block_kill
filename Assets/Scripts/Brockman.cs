@@ -6,13 +6,22 @@ using UnityEngine.UI;
 public class Brockman : MonoBehaviour
 {
     //キー設定
-    string yoko = "yoko1P";
-    private KeyCode _jamp = KeyCode.JoystickButton2;
-    private KeyCode _blockbutton = KeyCode.JoystickButton1;
-    private KeyCode _saverbutton = KeyCode.JoystickButton3;
+    private string yoko = "yoko1P";
+    private KeyCode sannkaku = KeyCode.Joystick1Button0;//ライトセイバーのボタン
+    private KeyCode maru = KeyCode.Joystick1Button1;//ブロックのボタン
+    private KeyCode batu = KeyCode.Joystick1Button2;
+    private KeyCode shikaku = KeyCode.Joystick1Button3;
+
+    public void control(string yo, KeyCode san, KeyCode ma, KeyCode ba)
+    {
+        yoko = yo;
+        sannkaku = san;
+        maru = ma;
+        batu = ba;
+    }
 
     public GameObject _camera;
-    public GameObject _charactor;
+    private GameObject _charactor;
 
     public int _blockselect = 1;
     private GameObject _blockPrefab;
@@ -34,11 +43,14 @@ public class Brockman : MonoBehaviour
 
     private List<GameObject> _colList = new List<GameObject>();
 
-    public Animator _animator;
+    private Animator _animator;
 
     // Use this for initialization
     void Start()
     {
+        _charactor = gameObject;
+        _charactor.name = "Brockman";
+        _animator = _charactor.GetComponent<Animator>();
         switch (_blockselect)
         {
             case 1:
@@ -61,37 +73,37 @@ public class Brockman : MonoBehaviour
         //_camera.transform.position = new Vector3(position.x,position.y,-10);
 
         //横矢印キーで移動とアニメーション
-        if (Input.GetKey(KeyCode.RightArrow) || Input.GetAxisRaw(yoko) > 0 || Input.GetKey(KeyCode.LeftArrow) || Input.GetAxisRaw(yoko) < 0)
+        if (Input.GetAxisRaw(yoko) < 0 || Input.GetAxisRaw(yoko) > 0)
         {
             movecharacter();
         }
 
         //スペースキーでジャンプ
         //スペースキーを押した瞬間
-        if ((Input.GetKey(KeyCode.Space) || Input.GetKeyDown(_jamp)) && _colList.Count != 0)
+        if (Input.GetKeyDown(batu) && _colList.Count != 0)
         {
             _charactor.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 50);
         }
 
         //Bボタンを押すと、ブロックに対して処理をする
-        if (Input.GetKeyDown(KeyCode.B) || Input.GetKeyDown(_blockbutton))
+        if (Input.GetKeyDown(maru))
         {
             BlockControl(_blockPrefab2,ref _RiftingBlock);
         }
 
         //Nボタンを押すと、ブロックに対して処理をする
-        if (Input.GetKeyDown(KeyCode.N) || Input.GetKeyDown(_blockbutton))
+        if (Input.GetKeyDown(KeyCode.N))
         {
             BlockControl(_blockPrefab3,ref _RiftingBlock);
         }
 
         //Mボタンを押すと、ブロックに対して処理をする
-        if (Input.GetKeyDown(KeyCode.M) || Input.GetKeyDown(_blockbutton))
+        if (Input.GetKeyDown(KeyCode.M))
         {
             BlockControl(_blockPrefab,ref _RiftingBlock);
         }
         //Gボタンを押すと、ブロックに対して処理をする
-        if (Input.GetKeyDown(KeyCode.G) || Input.GetKeyDown(_blockbutton))
+        if (Input.GetKeyDown(KeyCode.G))
         {
             BlockControl(_blockPrefab4, ref _RiftingBlock);
         }
@@ -103,13 +115,13 @@ public class Brockman : MonoBehaviour
         }
 
         //Hボタンを押すと、野球ボールに対して処理をする
-        if (Input.GetKeyDown(KeyCode.J) || Input.GetKeyDown(_blockbutton))
+        if (Input.GetKeyDown(KeyCode.J))
         {
             BlockControl(_baseballprefab, ref _RiftingBlock);
         }
 
         //Kキーを押すとライトセイバーで斬りつける
-        if ((Input.GetKeyDown(KeyCode.K) || Input.GetKeyDown(_saverbutton)) && _Lightsaver.activeSelf == false)
+        if ((Input.GetKeyDown(sannkaku)) && _Lightsaver.activeSelf == false)
         {
             slash(position.x,position.y);
         }
@@ -138,12 +150,12 @@ public class Brockman : MonoBehaviour
     private void movecharacter()
     {
         var position = _charactor.transform.position;
-        if (Input.GetKey(KeyCode.RightArrow) || Input.GetAxisRaw(yoko) > 0)
+        if (Input.GetAxisRaw(yoko) > 0)
         {
             position.x += 0.3f;
             _isLeftMove = false;
         }
-        else if (Input.GetKey(KeyCode.LeftArrow) || Input.GetAxisRaw(yoko) < 0)
+        else if (Input.GetAxisRaw(yoko) < 0)
         {
             position.x -= 0.3f;
             _isLeftMove = true;
@@ -163,7 +175,7 @@ public class Brockman : MonoBehaviour
             //Bキーでブロックを出す   //色々な種類のブロックを出せるようにしたい
             if (_colblockList.Count == 0)
             {
-                PrefabInatance(_blockPrefab, ref _RiftingBlock, 0, 4.5f);
+                PrefabInstance(_blockPrefab, ref _RiftingBlock, 0, 4.5f);
             }
             //Bキーで隣接するブロックを持ち上げる
             else
@@ -178,7 +190,7 @@ public class Brockman : MonoBehaviour
         else
         {
             _RiftingBlock.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-            if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow) || Input.GetAxisRaw(yoko) > 0 || Input.GetAxisRaw(yoko) < 0) //投げるか、置くか
+            if (Input.GetAxisRaw(yoko) < 0 || Input.GetAxisRaw(yoko) > 0) //投げるか、置くか
             {
                 float ThrowVelocity = 20;
                 if (_isLeftMove == false) //右に投げる
@@ -215,7 +227,7 @@ public class Brockman : MonoBehaviour
     }
 
     //prefabのインスタンス  //refの使い方がイマイチ分からない
-    private void PrefabInatance(GameObject prefab, ref GameObject gameobject, float X, float Y)
+    private void PrefabInstance(GameObject prefab, ref GameObject gameobject, float X, float Y)
     {
         var position = _charactor.transform.position;
         gameobject = Instantiate(prefab, new Vector2(position.x + X, position.y + Y), Quaternion.identity) as GameObject;
@@ -239,6 +251,7 @@ public class Brockman : MonoBehaviour
         _Lightsaver.transform.eulerAngles = new Vector3(0, 0, 30 * _SlashDirection);
         _Lightsaver.GetComponent<Rigidbody2D>().angularVelocity = -800 * _SlashDirection;
         _Lightsaver.GetComponent<Rigidbody2D>().velocity = new Vector2(15 * _SlashDirection, -23);
+        /*
         if (_RiftingBlock.name == "baseball")
         {
             _RiftingBlock.transform.position += new Vector3(_SlashDirection * 3,3,0);
@@ -246,6 +259,7 @@ public class Brockman : MonoBehaviour
             _RiftingBlock.GetComponent<Collider2D>().enabled = true;
             _RiftingBlock = null;
         }
+        */
     }
 
     //ゲームオーバーの処理

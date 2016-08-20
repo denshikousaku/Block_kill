@@ -10,7 +10,7 @@ public class GAMEOVERscript : MonoBehaviour {
     //変数
     string _tate = "tate1P";
 
-    public GameObject _GAMEOVER;
+    private GameObject _GAMEOVER;
 
     public Text _gameend;
 
@@ -28,6 +28,7 @@ public class GAMEOVERscript : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
+        _GAMEOVER = gameObject;
     }
 
     public void thiunthiun(GameObject deadobject) {
@@ -162,10 +163,14 @@ public class GAMEOVERscript : MonoBehaviour {
     {
         if (_RETRY == 1)
         {
-            SceneManager.LoadScene("GameScene001");
+            GameObject data = GameObject.Find("シーン間データ共有");
+            data.GetComponent<BattleSetting>().GetStage(SceneManager.GetActiveScene().name);
+
         }
         else if (_RETRY == 2)
         {
+            GameObject data = GameObject.Find("シーン間データ共有");
+            Destroy(data);
             SceneManager.LoadScene("title_scene");
         }
     }

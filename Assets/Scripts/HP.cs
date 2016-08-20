@@ -6,13 +6,15 @@ public class HP : MonoBehaviour{
 
     public int MaxHP;
     private int NowHP;
-    public GameObject HPtext;
-    public GameObject _GAMEOVER;
+    private GameObject HPtext;
+    private GameObject _GAMEOVER;
 
 	// Use this for initialization
 	void Start () {
         NowHP = MaxHP;
+        HPtext = GameObject.Find(gameObject.name + "HP");
         HPtext.GetComponent<Text>().text = "HP " + NowHP.ToString();
+        _GAMEOVER = GameObject.Find("GAMEOVER");
     }
 
     //最大HPを増減させる

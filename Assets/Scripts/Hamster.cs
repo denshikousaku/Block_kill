@@ -6,9 +6,13 @@ using System.Collections.Generic;
 
 public class Hamster : MonoBehaviour
 {
-    string yoko = "yoko2P";
+    private string yoko = "yoko2P";
+    private KeyCode sannkaku = KeyCode.Joystick2Button0;
+    private KeyCode maru = KeyCode.Joystick2Button1;//突進のボタン
+    private KeyCode batu = KeyCode.Joystick2Button2;
+    private KeyCode shikaku = KeyCode.Joystick2Button3;
 
-    public GameObject _hamster;
+    private GameObject _hamster;
     public GameObject _camera;
     public GameObject _gost;
 
@@ -19,12 +23,14 @@ public class Hamster : MonoBehaviour
 
     private List<GameObject> _colList = new List<GameObject>();
 
-    public Animator _animator;
+    private Animator _animator;
 
     // Use this for initialization
     void Start()
     {
-
+        _hamster = gameObject;
+        _hamster.name = "Hamster";
+        _animator = _hamster.GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -35,29 +41,25 @@ public class Hamster : MonoBehaviour
         //_camera.transform.position = new Vector3(position.x,position.y,-10);
 
         //横矢印キーで移動とアニメーション
-        if (Input.GetKey(KeyCode.C) || Input.GetAxisRaw(yoko) > 0)
+        if (Input.GetAxisRaw(yoko) > 0 || Input.GetAxisRaw(yoko) < 0)
         {
-            movecharacter(KeyCode.C);
-        }
-        else if (Input.GetKey(KeyCode.Z) || Input.GetAxisRaw(yoko) < 0)
-        {
-            movecharacter(KeyCode.Z);
+            movecharacter();
         }
 
         //スペースキーでジャンプ
-        if ((Input.GetKeyDown(KeyCode.D)) && _colList.Count != 0)
+        if ((Input.GetKeyDown(batu)) && _colList.Count != 0)
         {
             _hamster.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 50);
         }
 
         //Sボタンで突進
-        if(Input.GetKeyDown(KeyCode.S) && _gost.activeSelf == false && _colList.Count != 0)
+        if(Input.GetKeyDown(maru) && _gost.activeSelf == false && _colList.Count != 0)
         {
-            if(Input.GetKey(KeyCode.C) || _Right == true)
+            if(Input.GetAxisRaw(yoko) > 0 || _Right == true)
             {
                 _hamster.GetComponent<Rigidbody2D>().velocity = new Vector2(50,0);
             }
-            else if(Input.GetKey(KeyCode.Z) || _Right == false)
+            else if(Input.GetAxisRaw(yoko) < 0 || _Right == false)
             {
                 _hamster.GetComponent<Rigidbody2D>().velocity = new Vector2(-50, 0);
             }
@@ -81,15 +83,15 @@ public class Hamster : MonoBehaviour
     }
 
     //キャラクターを動かす
-    private void movecharacter(KeyCode KEY)
+    private void movecharacter()
     {
         var position = _hamster.transform.position;
-        if (Input.GetKey(KeyCode.C) || Input.GetAxisRaw(yoko) > 0)//右か左か
+        if (Input.GetAxisRaw(yoko) > 0)//右か左か
         {
             position.x += 0.5f;
             _Right = true;
         }
-        else if (Input.GetKey(KeyCode.Z) || Input.GetAxisRaw(yoko) < 0)
+        else if (Input.GetAxisRaw(yoko) < 0)
         {
             position.x -= 0.5f;
             _Right = false;
@@ -108,7 +110,7 @@ public class Hamster : MonoBehaviour
     }
 
     //prefabのインスタンス  //refの使い方がイマイチ分からない
-    private void PrefabInatance(GameObject prefab, ref GameObject gameobject, float X, float Y)
+    private void PrefabInstance(GameObject prefab, ref GameObject gameobject, float X, float Y)
     {
         var position = _hamster.transform.position;
         gameobject = Instantiate(prefab, new Vector2(position.x + X, position.y + Y), Quaternion.identity) as GameObject;

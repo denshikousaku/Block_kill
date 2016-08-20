@@ -6,17 +6,13 @@ public class GameTitle : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        if (Input.GetKeyDown("space"))
-        {
-            SceneManager.LoadScene("GameScene001");
-        }
     }
 	
 	// Update is called once per frame
 	void Update () {
         if (Input.GetKeyDown("space"))
         {
-            SceneManager.LoadScene("GameScene001");
+            SceneManager.LoadScene("CharactorSelectionScene");
         }
     }
 }

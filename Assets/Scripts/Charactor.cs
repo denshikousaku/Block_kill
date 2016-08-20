@@ -7,11 +7,18 @@ public class Charactor : MonoBehaviour {
     protected KeyCode Leftkey;
     protected KeyCode RightKey;
     protected KeyCode JumpKey;
-    public GameObject _charactor;
-    public GameObject _GAMEOVER;
-    public bool _isLeftMove = false;
-    public List<GameObject> _colList = new List<GameObject>();
-    public Animator _animator;
+    private GameObject _charactor;
+    private GameObject _GAMEOVER;
+    private bool _isLeftMove = false;
+    private List<GameObject> _colList = new List<GameObject>();
+    private Animator _animator;
+
+    void Start()
+    {
+        _charactor = gameObject;
+        _GAMEOVER = GameObject.Find("GAMEOVER");
+        _animator = _charactor.GetComponent<Animator>();
+    }
 
     // Update is called once per frame
     protected void Update()
